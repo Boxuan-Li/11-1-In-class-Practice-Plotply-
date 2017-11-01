@@ -1,8 +1,0 @@
----
-title: "11/1 In-class Practice"
-author: "Boxuan Li"
-date: "11/1/2017"
-output: html_document
----
-
-```{r loading packages, message=FALSE}

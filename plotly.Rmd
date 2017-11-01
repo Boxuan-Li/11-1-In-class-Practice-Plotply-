@@ -1,0 +1,82 @@
+---
+title: "plotly"
+author: "Boxuan Li"
+date: "11/1/2017"
+output: html_document
+---
+
+```{r loading packages, message=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.width = 8,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+library(tidyverse)
+library(janitor)
+library(stringr)
+library(forcats)
+library(viridis)
+library(plotly)
+```
+
+## read dataset and clean
+```{r read dataset, message=FALSE}
+airbnb <- read_csv("./data/nyc_airbnb.zip") %>%
+  clean_names() %>%
+  rename(.,boro = neighbourhood_group,
+           rating = review_scores_location) %>%
+  mutate(., rating = rating/2) %>%
+  filter(.,boro == "Manhattan",
+         room_type == "Entire home/apt",
+         price > 100 & price < 400)
+``` 
+
+## plotly scatterplot
+```{r}
+airbnb %>%
+  mutate(., hover_text = str_c("Price: $", price, '\nRating: ', rating)) %>%
+  plot_ly(x = ~longitude, y = ~latitude, type = "scatter", mode = "markers",
+          alpha = 0.5, 
+          color = ~price,
+          text = ~hover_text)
+```
+
+## plotly boxplot
+```{r}
+common_neighborhoods <- airbnb %>% 
+  count(neighbourhood, sort = TRUE) %>% 
+  top_n(8) %>% 
+  select(neighbourhood)
+## Selecting by n
+
+inner_join(airbnb, common_neighborhoods,
+             by = "neighbourhood") %>% 
+  mutate(neighbourhood = fct_reorder(neighbourhood, price)) %>% 
+  plot_ly(y = ~price, color = ~neighbourhood, type = "box",
+          colors = "Set2")
+```
+
+## plotly bar chart
+```{r}
+airbnb %>% 
+  count(neighbourhood) %>% 
+  mutate(neighbourhood = fct_reorder(neighbourhood, n)) %>% 
+  plot_ly(x = ~neighbourhood, y = ~n, color = ~neighbourhood, type = "bar")
+```
+
+## ggplotly
+```{r}
+scatter_ggplot = airbnb %>%
+  ggplot(aes(x = longitude, y = latitude, color = price)) +
+  geom_point(alpha = 0.25) +
+  scale_color_viridis() +
+  coord_cartesian() +
+  theme_classic()
+
+ggplotly(scatter_ggplot)
+```
+
+
+
