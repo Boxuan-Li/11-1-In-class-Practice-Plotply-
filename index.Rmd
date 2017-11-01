@@ -1,7 +1,11 @@
 ---
-title: "Holy cow!"
+title: "Airbnb Dashboard"
 ---
 
-### I have a webpage!
+## Cool dashboard on the airbnb dataset!
 
-And I can put all kinds of stuff on it!
+__[Here](href:dashboard.html) is the airbnb dashboard;__
+
+_and_
+
+__[Here](href:plotly.html) is the source code.__
